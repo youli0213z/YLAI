@@ -1,3 +1,4 @@
+import json
 import torch
 import numpy as np
 from ylml import ylnn
@@ -20,6 +21,9 @@ class LinearRegression_(ylnn.ylModule):
         self.input_num = input_num
         self.output_num = output_num
         self.w = torch.randn(self.input_num, self.output_num, requires_grad=True)
+        self.idx = 0
+        self.layer_name = 'LinearRegression_'
+        self.layer_name_idx = self.layer_name + str(self.idx)
         if bias == True:
             self.b = torch.zeros(self.input_num, self.output_num, requires_grad=True)
         else:
@@ -32,6 +36,22 @@ class LinearRegression_(ylnn.ylModule):
     def forward(self, x):
         x = torch.matmul(x, self.params[0].T) + self.params[1]
         return x
+    def get_weight(self):
+        weight_dict = {self.layer_name_idx:self.params}
+        return weight_dict
+    def get_weight_json(self):
+        self.layer_name_idx = self.layer_name + str(self.idx)
+        params = [param.cpu().tolist() for param in self.params]
+        weight_dict = {self.layer_name_idx: params}
+        with open(self.layer_name_idx+'.json','w') as weight_json:
+            weight_json_ = json.dump(weight_dict,weight_json)
+    def load_weight_json(self,weight_json_file_path,device):
+        with open(weight_json_file_path, "r") as weight_json_file:
+            weight_dict = json.load(weight_json_file)
+        self.w = torch.tensor(weight_dict[self.layer_name_idx][0],requires_grad=True,device = device)
+        self.b = torch.tensor(weight_dict[self.layer_name_idx][1], requires_grad=True,device = device)
+        self.params = [self.w,self.b]
+
 
 
     # def to(self, device='cpu'):

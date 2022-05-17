@@ -37,31 +37,24 @@ class ylModule:
         return self
 
 class Linear(ylModule):
-    def __init__(self,input_num,output_num,bias = True):
+    def __init__(self, input_num, output_num, bias=True):
         super(Linear, self).__init__()
-        self.input_num =input_num
+        self.input_num = input_num
         self.output_num = output_num
-        self.bias = bias
-        self.params = None
-    def parameters(self):
-        params_dict = {}
-        w = torch.randn(self.input_num,self.output_num,requires_grad=True)
-        self.w = w
-        w = nn.Parameter(torch.randn(self.input_num,self.output_num,requires_grad=True))
-        params_dict['w']= w
-        if self.bias == True:
-            b = torch.zeros(self.input_num,self.output_num,requires_grad=True)
-            self.b = b
-            b = nn.Parameter(torch.zeros(self.input_num,self.output_num,requires_grad=True))
-            params_dict['b']= b
-            self.b = b
+        self.w = torch.randn(self.input_num, self.output_num, requires_grad=True)
+        self.idx = 0
+        self.layer_name = 'Linear'
+        if bias == True:
+            self.b = torch.zeros(self.input_num, self.output_num, requires_grad=True)
         else:
-            self.b = torch
-        self.params = params_dict
-        return params_dict.values()
-    def forward(self,x):
-        x = torch.matmul(x,self.w.T)
+            self.b = torch.zeros_like(self.w)
+        self.params = [self.w, self.b]
 
-        return
+    def parameters(self):
+        return self.params
+
+    def forward(self, x):
+        x = torch.matmul(x, self.params[0].T) + self.params[1]
+        return x
 
 

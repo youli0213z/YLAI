@@ -8,7 +8,7 @@ import time
 #机器学习算法
 class LinearRegression(nn.Module):
     def __init__(self):
-        super(LinearRegression,self).__init__()
+        super().__init__()
         self.model = nn.Linear(3,1)
     def forward(self,x):
         return self.model(x)
@@ -238,7 +238,7 @@ class ActivationFunction:
             x = torch.tensor(x,device = device)
         return torch.exp(x) / torch.sum(torch.exp(x),axis = 1,keepdim=True)
 #神经网络模块
-class ylnn:
+class nn:
     def __init__(self):
         pass
     class Linear:

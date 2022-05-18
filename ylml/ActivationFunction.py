@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 
-def Sigmoid(x, device='cpu'):
+def Sigmoid_(x, device='cpu'):
     if torch.is_tensor(x) == False:
         x = torch.tensor(x, device=device)
     return 1 / (1 + torch.exp(-1 * x))
@@ -16,7 +16,7 @@ def show_Sigmoid():
     plt.title('sigmoid')
     plt.show()
 
-def Tanh(x,device = 'cpu'):
+def Tanh_(x,device = 'cpu'):
     if torch.is_tensor(x) == False:
         x = torch.tensor(x, device=device)
     return (torch.exp(x) - torch.exp(-x)) / (torch.exp(x) + torch.exp(-x))
@@ -30,13 +30,13 @@ def show_Tanh():
     plt.title('Tanh')
     plt.show()
 
-def Relu(x,device = 'cpu'):
+def Relu_(x,device = 'cpu'):
     if torch.is_tensor(x) == False:
         x = torch.tensor(x,device = device)
     a = torch.zeros_like(x)
     return torch.max(x,a)
 
-def LeakyRelu(x,alpha = 0.01,device = 'cpu'):
+def LeakyRelu_(x,alpha = 0.01,device = 'cpu'):
     if torch.is_tensor(x) == False:
         x = torch.tensor(x,device = device)
     if torch.is_tensor(alpha) == False:
@@ -47,7 +47,7 @@ def LeakyRelu(x,alpha = 0.01,device = 'cpu'):
 
 def show_Relu():
     x = np.linspace(-10, 10, 1000)
-    y = Relu(x)
+    y = Relu_(x)
     plt.figure()
     plt.plot(x, y, 'r.', markersize=2)
     plt.xticks((-10, 10))
@@ -56,14 +56,14 @@ def show_Relu():
 
 def show_LeakyRelu():
     x = np.linspace(-10, 10, 1000)
-    y = LeakyRelu(x,1)
+    y = LeakyRelu_(x,1)
     plt.figure()
     plt.plot(x, y, 'r.', markersize=2)
     plt.xticks((-10, 10))
     plt.title('LeakyRelu')
     plt.show()
 
-def Softmax(x,device = 'cpu'):
+def Softmax_(x,device = 'cpu'):
     if torch.is_tensor(x) == False:
         x = torch.tensor(x,device = device)
     return torch.exp(x) / torch.sum(torch.exp(x),axis = 1,keepdim=True)

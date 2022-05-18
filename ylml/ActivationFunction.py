@@ -36,12 +36,12 @@ def Relu(x,device = 'cpu'):
     a = torch.zeros_like(x)
     return torch.max(x,a)
 
-def LeakyRelu(x,alpha,device = 'cpu'):
+def LeakyRelu(x,alpha = 0.01,device = 'cpu'):
     if torch.is_tensor(x) == False:
         x = torch.tensor(x,device = device)
     if torch.is_tensor(alpha) == False:
         alpha = torch.tensor(alpha, device=device)
-    a = torch.ones_like(x) * alpha
+    a = torch.ones_like(x) * alpha * (-1)
 
     return torch.max(x,a)
 
@@ -56,11 +56,11 @@ def show_Relu():
 
 def show_LeakyRelu():
     x = np.linspace(-10, 10, 1000)
-    y = Relu(x,0.1)
+    y = LeakyRelu(x,1)
     plt.figure()
     plt.plot(x, y, 'r.', markersize=2)
     plt.xticks((-10, 10))
-    plt.title('Relu')
+    plt.title('LeakyRelu')
     plt.show()
 
 def Softmax(x,device = 'cpu'):

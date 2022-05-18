@@ -45,14 +45,12 @@ class LinearRegression_(ylnn.ylModule):
         weight_dict = {self.layer_name_idx: params}
         with open(self.layer_name_idx+'.json','w') as weight_json:
             weight_json_ = json.dump(weight_dict,weight_json)
-    def load_weight_json(self,weight_json_file_path,device):
+    def load_weight_json(self,weight_json_file_path,device ='cpu'):
         with open(weight_json_file_path, "r") as weight_json_file:
             weight_dict = json.load(weight_json_file)
         self.w = torch.tensor(weight_dict[self.layer_name_idx][0],requires_grad=True,device = device)
         self.b = torch.tensor(weight_dict[self.layer_name_idx][1], requires_grad=True,device = device)
         self.params = [self.w,self.b]
-
-
 
     # def to(self, device='cpu'):
     #     for param in self.params:

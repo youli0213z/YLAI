@@ -1,7 +1,6 @@
 import json
 import torch
 import numpy as np
-from ylml import ylnn
 from torch import nn
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
@@ -45,45 +44,6 @@ class LinearRegression(nn.Module):
     def forward(self,x):
         return self.model(x)
 
-class LinearRegression_(ylnn.ylModule):
-    def __init__(self, input_num, output_num, bias=True):
-        super(LinearRegression_, self).__init__()
-        self.input_num = input_num
-        self.output_num = output_num
-        self.model = []
-        self.params_exist = True
-        self.w = torch.randn(self.input_num, self.output_num, requires_grad=True)
-        self.idx = 0
-        self.layer_name = 'LinearRegression_'
-        self.layer_name_idx = self.layer_name + str(self.idx)
-        if bias == True:
-            self.b = torch.zeros(self.input_num, self.output_num, requires_grad=True)
-        else:
-            self.b = torch.zeros_like(self.w)
-        self.params = [self.w,self.b]
-
-    def parameters(self):
-        return self.params
-
-    def forward(self, x):
-        x = torch.matmul(x, self.params[0]) + self.params[1]
-        return x
-    def get_weight(self):
-        weight_dict = {self.layer_name_idx:self.params}
-        return weight_dict
-    def get_weight_json(self):
-        self.layer_name_idx = self.layer_name + str(self.idx)
-        params = [param.cpu().tolist() for param in self.params]
-        weight_dict = {self.layer_name_idx: params}
-        with open(self.layer_name_idx+'.json','w') as weight_json:
-            weight_json_ = json.dump(weight_dict,weight_json)
-    def load_weight_json(self,weight_json_file_path,device ='cpu'):
-        with open(weight_json_file_path, "r") as weight_json_file:
-            weight_dict = json.load(weight_json_file)
-        self.w = torch.tensor(weight_dict[self.layer_name_idx][0],requires_grad=True,device = device)
-        self.b = torch.tensor(weight_dict[self.layer_name_idx][1], requires_grad=True,device = device)
-        self.params = [self.w,self.b]
-
     # def to(self, device='cpu'):
     #     for param in self.params:
     #         param = param.to(device)
@@ -107,6 +67,7 @@ class Train:
         self.accurary_rate_valid = []
         if val_idx != None:
             self.max_valid_num = int(self.max_epochs / val_idx)
+            self.val_idx = val_idx
         if self.task_type == 'REG':
             if isinstance(self.model,nn.Module):
                 self.model.train()
@@ -141,7 +102,7 @@ class Train:
                     self.optimizer.step()
                     loss = loss_.item()
                     # if idx+1 % self.val_idx == 0:
-                    self.loss_train_list.append(loss)
+                self.loss_train_list.append(loss)
                 accurary_rate = round(accurary_num.cpu().item()/total_num,4)
                 self.accurary_rate_train.append(accurary_rate)
                 print('Train_set Epoch [{}/{}] loss: {}, acc: {}'.format(epoch, self.max_epochs, loss, accurary_rate))
@@ -162,7 +123,7 @@ class Train:
                             loss_ = self.loss_function(t_hat, t.to(self.device))
                             loss = loss_.item()
                             # if idx+1 % self.val_idx == 0:
-                            self.loss_valid_list.append(loss)
+                        self.loss_valid_list.append(loss)
                         accurary_rate = round(accurary_num.cpu().item() / total_num, 4)
                         self.accurary_rate_valid.append(accurary_rate)
                         print('Start Validation!')
@@ -176,7 +137,7 @@ class Train:
         set_figsize(figsize=(4, 3))
         plt.plot(list(range(n_train_loss_value)), self.loss_train_list, 'b-', linewidth=1, label='Train_loss')
         plt.title('loss_curve')
-        plt.xlabel('time')
+        plt.xlabel('Epochs')
         plt.ylabel('loss')
         plt.legend()
         plt.ylim(loss_min, loss_max)
@@ -193,7 +154,7 @@ class Train:
             plt.plot(list(range(n_accurary_rate_valid)), self.accurary_rate_valid, 'y-', linewidth=1, label='Valid_acc')
             plt.plot(list(range(n_valid_loss_value)), self.loss_valid_list, 'g-', linewidth=1, label='Valid_loss')
         plt.title('loss_curve')
-        plt.xlabel('time')
+        plt.xlabel('Epochs')
         plt.ylabel('loss_acc')
         plt.legend()
         plt.ylim(0, 1)

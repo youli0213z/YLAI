@@ -1,3 +1,4 @@
+import torch
 from torch import nn
 from torchvision.datasets import CIFAR10,FashionMNIST
 from torchvision import transforms
@@ -5,7 +6,7 @@ from torch.utils.data import DataLoader
 from matplotlib_inline import backend_inline
 import matplotlib.pyplot as plt
 import json
-from ylml.LossFunction import *
+from ylml.ActivationFunction import *
 class ylModule:
     def __init__(self):
         self.params_exist = True
